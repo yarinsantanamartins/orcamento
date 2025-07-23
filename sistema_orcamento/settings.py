@@ -118,3 +118,5 @@ CLOUDINARY_STORAGE = {
     'API_KEY': '982989611395839',
     'API_SECRET': 'G7c8OWPxO75SeQc-Y4ADw8i8OXM',
 }
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
