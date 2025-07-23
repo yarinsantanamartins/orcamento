@@ -132,7 +132,7 @@
     <ul class="orcamento-lista">
         {% for orcamento in orcamentos %}
             <li class="orcamento-item">
-                <span class="orcamento-nome">📦 {{ orcamento.nome }} {{ Cliente.nome }}</span>
+                <span class="orcamento-nome">📦 {{ orcamento.nome }} - {{ orcamento.cliente.nome }}</span>
                 <div class="btn-group">
                     <a class="ver-btn" href="{% url 'resultado_orcamento' orcamento.pk %}">🔍 Ver</a>
                     <a class="editar-btn" href="{% url 'editar_orcamento' orcamento.pk %}">✏️ Editar</a>
