@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Orçamento</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    @page {
+      size: A4;
+      margin: 15mm 10mm 15mm 10mm;
+    }
+    body {
+      font-family: 'Courier New', Courier, monospace;
+      background: white;
+      margin: 0;
+      padding: 10px 15px;
+      color: #000;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+    .container {
+      max-width: 780px;
+      margin: 0 auto;
+      border: 1px solid #000;
+      border-radius: 0;
+      padding: 15px 20px;
+      box-sizing: border-box;
+      background-color: #f5f5f5;
+    }
+    .logo {
+      display: block;
+      margin: 0 auto 8px auto;
+      max-width: 140px;
+      height: auto;
+      padding: 0;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+    }
+
+    h2.title {
+      text-align: center;
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-weight: bold;
+      font-size: 13px;
+      color: #000;
+      border-bottom: 2px double #000;
+      padding-bottom: 4px;
+    }
+    .section {
+      margin-bottom: 12px;
+      padding: 8px 12px;
+      border: 1px solid #000;
+      border-radius: 0;
+      background: #e0e0e0;
+    }
+    .info p {
+      margin: 3px 0;
+      font-size: 12px;
+    }
+    .info strong {
+      color: #000;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      font-size: 12px;
+      margin-top: 6px;
+    }
+    th, td {
+      border: 1px solid #000;
+      padding: 5px 7px;
+      text-align: left;
+    }
+    th {
+      background-color: #b0c4de;
+      color: #000;
+      font-weight: bold;
+    }
+    tfoot td {
+      font-weight: bold;
+      background-color: #dcdcdc;
+    }
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      background-color: #3e3e3e;
+      color: white;
+      padding: 6px 16px;
+      font-size: 13px;
+      font-weight: bold;
+      border: 1px solid #000;
+      border-radius: 0;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn:hover {
+      background-color: #222;
+    }
+
+    .inputs-descontos {
+      margin: 15px 0;
+      display: flex;
+      gap: 20px;
+      justify-content: flex-start;
+    }
+    .inputs-descontos label {
+      font-weight: bold;
+      margin-right: 5px;
+    }
+    .inputs-descontos input {
+      width: 100px;
+      padding: 4px 6px;
+      font-size: 12px;
+      border: 1px solid #000;
+      background: #fff;
+    }
+
+    .resumo-valores {
+      margin-top: 10px;
+      font-size: 12px;
+      font-weight: bold;
+      background-color: #dcdcdc;
+      padding: 8px;
+      border: 1px solid #000;
+      border-radius: 0;
+      width: fit-content;
+    }
+    .resumo-valores p {
+      margin: 3px 0;
+    }
+
+    @media print {
+      .btn, .inputs-descontos input, .inputs-descontos label {
+        display: none;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        background: white;
+      }
+      .container {
+        border: none;
+        border-radius: 0;
+        padding: 0;
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    {% if empresa.logotipo %}
+      <img src="{{ empresa.logotipo.url }}" alt="Logo da Empresa" class="logo" />
+    {% else %}
+      <p style="text-align: center;">Logo não disponível</p>
+    {% endif %}
+
+    <h2 class="title">Dados da Empresa</h2>
+    <div class="section info">
+      <p><strong>Razão Social:</strong> {{ empresa.razao_social }}</p>
+      <p><strong>CNPJ:</strong> {{ empresa.cnpj }}</p>
+      <p><strong>Email:</strong> {{ empresa.email }}</p>
+      <p><strong>Telefone:</strong> {{ empresa.telefone }}</p>
+      <p><strong>Endereço:</strong> {{ empresa.endereco }}</p>
+    </div>
+
+    <h2 class="title">Dados do Cliente</h2>
+    <div class="section info">
+      <p><strong>Nome Fantasia:</strong> {{ cliente.nome_fantasia }}</p>
+      <p><strong>Razão Social:</strong> {{ cliente.razao_social }}</p>
+      <p><strong>CNPJ:</strong> {{ cliente.cnpj }}</p>
+      <p><strong>Telefone:</strong> {{ cliente.telefone }}</p>
+      <p><strong>Email:</strong> {{ cliente.email }}</p>
+      <p><strong>Endereço:</strong> {{ cliente.endereco }}</p>
+    </div>
+
+    <div class="inputs-descontos">
+      <div>
+        <label for="acrescimo">Acréscimo (R$):</label>
+        <input type="number" id="acrescimo" value="0.00" step="0.01" oninput="atualizarTotais()">
+      </div>
+      <div>
+        <label for="desconto">Desconto (R$):</label>
+        <input type="number" id="desconto" value="0.00" step="0.01" oninput="atualizarTotais()">
+      </div>
+    </div>
+
+    <div class="section">
+      <h2 style="font-size: 13px; font-weight: bold; margin: 0 0 6px 0;">Detalhes do Orçamento</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Produto / Serviço</th>
+            <th>Qtd.</th>
+            <th>Valor Unit. (R$)</th>
+            <th>Valor Total (R$)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{ orcamento.nome }}</td>
+            <td>{{ orcamento.quantidade }}</td>
+            <td>{{ resultado.preco_unitario }}</td>
+            <td>{{ resultado.preco_total }}</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3" style="text-align: right;">Subtotal:</td>
+            <td id="subtotal">{{ resultado.preco_total }}</td>
+          </tr>
+          <tr>
+            <td colspan="3" style="text-align: right;">Acréscimo:</td>
+            <td id="valor-acrescimo">0.00</td>
+          </tr>
+          <tr>
+            <td colspan="3" style="text-align: right;">Desconto:</td>
+            <td id="valor-desconto">0.00</td>
+          </tr>
+          <tr>
+            <td colspan="3" style="text-align: right;">Total Final:</td>
+            <td id="total-final">{{ resultado.preco_total }}</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <div class="buttons">
+      <button class="btn" onclick="window.print()">🖨️ Imprimir</button>
+      <button class="btn" onclick="shareBudget()">📤 Compartilhar</button>
+    </div>
+
+  </div>
+
+  <script>
+    function atualizarTotais() {
+      let subtotalEl = document.getElementById('subtotal');
+      let subtotal = parseFloat(subtotalEl.innerText.replace(',', '.')) || 0;
+
+      let acrescimo = parseFloat(document.getElementById('acrescimo').value) || 0;
+      let desconto = parseFloat(document.getElementById('desconto').value) || 0;
+
+      let totalFinal = subtotal + acrescimo - desconto;
+
+      document.getElementById('valor-acrescimo').innerText = acrescimo.toFixed(2).replace('.', ',');
+      document.getElementById('valor-desconto').innerText = desconto.toFixed(2).replace('.', ',');
+      document.getElementById('total-final').innerText = totalFinal.toFixed(2).replace('.', ',');
+    }
+
+    function shareBudget() {
+      if (navigator.share) {
+        navigator.share({
+          title: 'Orçamento: {{ orcamento.nome }}',
+          text: 'Confira o orçamento detalhado.',
+          url: window.location.href
+        }).catch((error) => console.log('Erro ao compartilhar:', error));
+      } else {
+        alert('Seu navegador não suporta compartilhamento. Copie o link: ' + window.location.href);
+      }
+    }
+
+    window.onload = atualizarTotais;
+  </script>
+</body>
+</html>

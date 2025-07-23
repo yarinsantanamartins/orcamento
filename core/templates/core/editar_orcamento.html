@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>✏️ Editar Orçamento: {{ orcamento.nome }}</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom, #f0f8ff, #e6f2ff);
+      padding: 30px 15px;
+      margin: 0;
+      color: #2c3e50;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 28px;
+      color: #2c3e50;
+      margin-bottom: 30px;
+    }
+
+    form {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    fieldset {
+      margin-bottom: 25px;
+      padding: 20px;
+      border: 2px solid #dce3f0;
+      border-radius: 8px;
+      background-color: #f9fcff;
+    }
+
+    legend {
+      font-weight: bold;
+      font-size: 18px;
+      color: #1a5276;
+      padding: 0 8px;
+    }
+
+    p {
+      margin-bottom: 15px;
+    }
+
+    label {
+      font-weight: 500;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+      width: 93%;
+      padding: 8px;
+      font-size: 15px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      margin-top: 5px;
+    }
+
+    input[type="checkbox"] {
+      transform: scale(1.2);
+      margin-right: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+    }
+
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      background-color: #eaf3fc;
+    }
+
+    /* Botões lado a lado */
+    .btn-group {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .btn-voltar,
+    .btn-submit {
+      padding: 6px 16px;
+      font-size: 14px;
+      border-radius: 5px;
+      min-width: 100px;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      font-weight: 600;
+      transition: background-color 0.3s;
+      border: none;
+      color: white;
+      display: inline-block;
+    }
+
+    .btn-voltar {
+      background-color: #3498db;
+    }
+
+    .btn-voltar:hover {
+      background-color: #2c7acb;
+    }
+
+    .btn-submit {
+      background-color: #4CAF50;
+    }
+
+    .btn-submit:hover {
+      background-color: #45a049;
+    }
+
+    @media (max-width: 600px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+
+      thead tr {
+        display: none;
+      }
+
+      tr {
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 5px;
+      }
+
+      td {
+        border: none;
+        padding: 5px 10px;
+        position: relative;
+      }
+
+      td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: inline-block;
+        width: 140px;
+      }
+
+      .btn-group {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .btn-voltar,
+      .btn-submit {
+        font-size: 16px;
+        padding: 12px 0;
+        min-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<h1>✏️ Editar Orçamento: {{ orcamento.nome }}</h1>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+
+  <fieldset>
+    <legend>📄 Dados do Orçamento</legend>
+
+    <p>{{ form.nome.label_tag }}<br>{{ form.nome }}</p>
+    <p>{{ form.cliente.label_tag }}<br>{{ form.cliente }}</p>
+    <p>{{ form.quantidade.label_tag }}<br>{{ form.quantidade }}</p>
+    <p>{{ form.tempo_por_unidade.label_tag }}<br>{{ form.tempo_por_unidade }}</p>
+    <p>{{ form.margem_lucro.label_tag }}<br>{{ form.margem_lucro }}</p>
+    <p>{{ form.folhas_pb.label_tag }}<br>{{ form.folhas_pb }}</p>
+    <p>{{ form.folhas_coloridas.label_tag }}<br>{{ form.folhas_coloridas }}</p>
+  </fieldset>
+
+  <fieldset>
+    <legend>📦 Materiais Utilizados</legend>
+    {{ formset.management_form }}
+
+    <table>
+      <thead>
+        <tr>
+          <th>Material</th>
+          <th>Quantidade Utilizada</th>
+          <th>Cliente Fornece?</th>
+          <th>Remover</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for form in formset %}
+        <tr>
+          <td data-label="Material">{{ form.material }}</td>
+          <td data-label="Quantidade Utilizada">{{ form.quantidade_utilizada }}</td>
+          <td data-label="Cliente Fornece?">{{ form.fornecido_pelo_cliente }}</td>
+          <td data-label="Remover">{% if form.DELETE %}{{ form.DELETE }}{% endif %}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="4" style="text-align: center;">Nenhum material adicionado.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </fieldset>
+
+  <div class="btn-group">
+    <a href="{% url 'resultado_orcamento' orcamento.pk %}" class="btn-voltar">🔙 Cancelar</a>
+    <button type="submit" class="btn-submit">💾 Salvar</button>
+  </div>
+</form>
+
+</body>
+</html>

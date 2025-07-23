@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>📊 Resultado do Orçamento</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom, #f0f8ff, #e6f2ff);
+      color: #333;
+    }
+    .container {
+      max-width: 960px;
+      margin: 30px auto;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 30px;
+      font-size: 24px;
+    }
+    .section-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin: 25px 0 10px;
+      color: #1a5276;
+      border-bottom: 2px solid #ccc;
+      padding-bottom: 5px;
+    }
+    .grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .card {
+      background: #fff;
+      border-left: 5px solid #4a90e2;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      padding: 15px 20px;
+      flex: 1 1 calc(50% - 20px);
+      min-width: 260px;
+      transition: transform 0.2s ease;
+    }
+    .card:hover {
+      transform: scale(1.02);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+    .card p {
+      margin: 8px 0;
+      font-size: 14px;
+    }
+    .card strong {
+      color: #2c3e50;
+    }
+    .highlight { background-color: #e8f6ff; border-left-color: #3498db; }
+    .total { background-color: #e0ffe5; border-left-color: #27ae60; }
+    .lucro { background-color: #fff5e6; border-left-color: #f39c12; }
+    .buttons {
+      margin-top: 30px;
+      text-align: center;
+    }
+    .buttons a {
+      background-color: #4a90e2;
+      color: white;
+      padding: 10px 20px;
+      text-decoration: none;
+      font-weight: bold;
+      border-radius: 6px;
+      transition: background-color 0.3s ease;
+      margin: 0 5px;
+      display: inline-block;
+    }
+    .buttons a:hover { background-color: #357ab8; }
+    .buttons a.gerar {
+      background-color: #27ae60;
+    }
+    .buttons a.gerar:hover {
+      background-color: #1f8f4e;
+    }
+    @media (max-width: 600px) {
+      .card { flex: 1 1 100%; }
+      .buttons a {
+        display: block;
+        width: 80%;
+        margin: 10px auto;
+        font-size: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>📊 Resultado do Orçamento: {{ orcamento.nome }}</h1>
+
+  <!-- Cálculo Mão de Obra -->
+  <div class="section-title">⏱ Cálculo Detalhado da Mão de Obra</div>
+  <div class="grid">
+    <div class="card">
+      <p><strong>Salário desejado:</strong> R$ {{ resultado.salario_desejado }}</p>
+      <p><strong>Dias por semana:</strong> {{ resultado.dias_semana }} dias</p>
+      <p><strong>Horas por dia:</strong> {{ resultado.horas_dia }} h</p>
+      <p><strong>Horas por mês:</strong> {{ resultado.horas_mes }} h</p>
+      <p><strong>Valor da hora:</strong> R$ {{ resultado.valor_hora }}</p>
+      <p><strong>Valor do minuto:</strong> R$ {{ resultado.valor_minuto }}</p>
+      <hr>
+      <p><strong>Tempo por unidade:</strong> {{ resultado.tempo_por_unidade }} min</p>
+      <p><strong>Custo mão de obra (un):</strong> R$ {{ resultado.custo_mao_obra_unit }}</p>
+    </div>
+  </div>
+
+  <!-- Impressão -->
+  <div class="section-title">🖨 Detalhamento da Impressão</div>
+  <div class="grid">
+    <div class="card">
+      <p><strong>Folhas PB:</strong> {{ orcamento.folhas_pb }}</p>
+      <p><strong>Valor por folha PB:</strong> R$ {{ resultado.valor_pb_unit }}</p>
+      <p><strong>Total PB:</strong> R$ {{ resultado.custo_pb }}</p>
+      <hr>
+      <p><strong>Folhas Coloridas:</strong> {{ orcamento.folhas_coloridas }}</p>
+      <p><strong>Valor por folha colorida:</strong> R$ {{ resultado.valor_colorida_unit }}</p>
+      <p><strong>Total Colorida:</strong> R$ {{ resultado.custo_colorida }}</p>
+    </div>
+  </div>
+
+  <!-- Mão de Obra + Impressão Totais -->
+  <div class="section-title">💼 Mão de Obra e Impressão</div>
+  <div class="grid">
+    <div class="card">
+      <p>Mão de Obra (un): <strong>R$ {{ resultado.custo_mao_obra_unit }}</strong>  
+      <br>Total: <strong>R$ {{ resultado.custo_mao_obra_total }}</strong></p>
+
+      <p>Impressão (un): <strong>R$ {{ resultado.custo_impressao_unit }}</strong>  
+      <br>Total: <strong>R$ {{ resultado.custo_impressao_total }}</strong></p>
+    </div>
+  </div>
+
+  <!-- Materiais -->
+  <div class="section-title">🧰 Materiais e Outras Despesas</div>
+  <div class="grid">
+    <div class="card">
+      <p>Materiais (un): <strong>R$ {{ resultado.custo_materiais_unit }}</strong>  
+      <br>Total: <strong>R$ {{ resultado.custo_materiais_total }}</strong></p>
+
+      <p>Despesas Extras (un): <strong>R$ {{ resultado.custo_despesas_unit }}</strong>  
+      <br>Total: <strong>R$ {{ resultado.custo_despesas_total }}</strong></p>
+    </div>
+  </div>
+
+  <!-- Materiais Detalhados -->
+  {% if resultado.materiais_detalhados %}
+    <div class="section-title">📦 Materiais Detalhados</div>
+    <div class="grid">
+      {% for mat in resultado.materiais_detalhados %}
+        <div class="card">
+          <p><strong>{{ mat.nome }}</strong></p>
+          <p>Quantidade: {{ mat.quantidade }} {{ mat.unidade }}</p>
+          <p>Valor unitário: R$ {{ mat.valor_unitario }}</p>
+          <p>Total: R$ {{ mat.total }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p style="margin-left: 10px;">📦 O cliente forneceu todos os materiais.</p>
+  {% endif %}
+
+  <!-- Totais -->
+  <div class="section-title">📊 Resumo Financeiro</div>
+  <div class="grid">
+    <div class="card total">
+      <p><strong>Valor Unitário:</strong> R$ {{ resultado.custo_unitario }}</p>
+      <p><strong>Valor Total:</strong> R$ {{ resultado.custo_total }}</p>
+    </div>
+
+    <div class="card highlight">
+      <p><strong>Preço Final de Venda:</strong> R$ {{ resultado.preco_unitario }}</p>
+      <p><strong>Preço de Venda Total:</strong> R$ {{ resultado.preco_total }}</p>
+    </div>
+
+    <div class="card lucro">
+      <p><strong>Lucro Total:</strong> R$ {{ resultado.lucro }}</p>
+    </div>
+  </div>
+
+  <!-- Botões -->
+  <div class="buttons">
+    <a href="{% url 'lista_orcamentos' %}">🔙 Voltar</a>
+    <a href="{% url 'gerar_orcamento_html' orcamento.pk %}" class="gerar">📝 Gerar</a>
+  </div>
+</div>
+
+</body>
+</html>
