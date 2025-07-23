@@ -187,13 +187,12 @@
 
 <!-- LOGO FORA E CENTRALIZADA -->
 <div class="top-logo">
-  {% if empresa and empresa.logotipo %}
-    <img src="{{ empresa.logotipo.url }}" alt="Logo da Empresa">
-  {% else %}
-    <p>Logo não definida</p>
-  {% endif %}
+    {% if empresa and empresa.logotipo and empresa.logotipo.url %}
+  <img src="{{ empresa.logotipo.url }}" alt="Logo da Empresa">
+    {% else %}
+  <p>Logo não definida</p>
+    {% endif %}
 </div>
-
 <div id="mySidebar" class="sidebar">
   <button class="closebtn" onclick="toggleSidebar()">×</button>
   <a href="{% url 'parametros_sistema' %}">⚙️ Parâmetros do Sistema</a>
