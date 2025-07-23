@@ -28,20 +28,26 @@ class Cliente(models.Model):
 
 
 class ConfiguracoesSistema(models.Model):
-    valor_mensal_desejado = models.DecimalField("Valor mensal desejado", max_digits=10, decimal_places=2)
-    dias_por_semana = models.PositiveIntegerField("Dias por semana")
-    horas_por_dia = models.PositiveIntegerField("Horas por dia")
-    margem_lucro_padrao = models.DecimalField("Margem de lucro padrão (%)", max_digits=5, decimal_places=2)
+    valor_mensal_desejado = models.DecimalField(
+        "Valor mensal desejado", max_digits=10, decimal_places=2, default=Decimal('0.00')
+    )
+    dias_por_semana = models.PositiveIntegerField("Dias por semana", default=5)
+    horas_por_dia = models.PositiveIntegerField("Horas por dia", default=8)
+    margem_lucro_padrao = models.DecimalField(
+        "Margem de lucro padrão (%)", max_digits=5, decimal_places=2, default=Decimal('10.00')
+    )
 
-    percentual_energia = models.DecimalField("Energia (%)", max_digits=5, decimal_places=2, default=0)
-    percentual_internet = models.DecimalField("Internet (%)", max_digits=5, decimal_places=2, default=0)
+    percentual_energia = models.DecimalField("Energia (%)", max_digits=5, decimal_places=2, default=Decimal('0.00'))
+    percentual_internet = models.DecimalField("Internet (%)", max_digits=5, decimal_places=2, default=Decimal('0.00'))
 
-    custo_impressao_pb = models.DecimalField("Custo impressão PB", max_digits=6, decimal_places=2, default=0)
-    custo_impressao_colorida = models.DecimalField("Custo impressão colorida", max_digits=6, decimal_places=2, default=0)
+    custo_impressao_pb = models.DecimalField("Custo impressão PB", max_digits=6, decimal_places=2, default=Decimal('0.00'))
+    custo_impressao_colorida = models.DecimalField("Custo impressão colorida", max_digits=6, decimal_places=2, default=Decimal('0.00'))
 
     def valor_hora(self):
         semanas_mes = Decimal('4.33')
         total_horas = Decimal(self.dias_por_semana * self.horas_por_dia) * semanas_mes
+        if total_horas == 0:
+            return Decimal('0.00')
         valor = self.valor_mensal_desejado / total_horas
         return valor.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
 
