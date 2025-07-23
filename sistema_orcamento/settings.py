@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +26,8 @@ MEDIA_ROOT = BASE_DIR / 'media'  # usando Path para construir o caminho
 SECRET_KEY = 'django-insecure-&s+^h=_&@i_jz$=5ziz(!6163=cuw(nblj9ti0b$e(e$tb34u='
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "False") == "True"
+
 
 ALLOWED_HOSTS = []
 
@@ -122,3 +124,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = 'login'
+
+import dj_database_url
+DATABASES['default'] = dj_database_url.config(conn_max_age=600)
+
+ALLOWED_HOSTS = ['orcamento-b00j.onrender.com', 'localhost', '127.0.0.1']
+
