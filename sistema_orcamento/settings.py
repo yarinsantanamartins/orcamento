@@ -16,7 +16,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # Security
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-&s+^h=_&@i_jz$=5ziz(!6163=cuw(nblj9ti0b$e(e$tb34u=')
 DEBUG = config('DEBUG', default=False, cast=bool)
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,orcamento-b00j.onrender.com', cast=Csv)
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,orcamento-b00j.onrender.com', cast=Csv())
 
 # Cloudinary config com chaves fixas
 cloudinary.config(
