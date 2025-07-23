@@ -1,6 +1,6 @@
 from django.db import models
 from decimal import Decimal, ROUND_HALF_UP
-
+from cloudinary.models import CloudinaryField
 
 class Empresa(models.Model):
     nome_fantasia = models.CharField("Nome Fantasia", max_length=150)
@@ -9,10 +9,11 @@ class Empresa(models.Model):
     telefone = models.CharField("Telefone", max_length=20, blank=True)
     email = models.EmailField("Email", blank=True)
     endereco = models.TextField("Endereço", blank=True)
-    logotipo = models.ImageField("Logotipo", upload_to='logos/', blank=True, null=True)
+    logotipo = CloudinaryField("Logotipo", blank=True, null=True)
 
     def __str__(self):
         return self.nome_fantasia
+
 
 
 class Cliente(models.Model):
