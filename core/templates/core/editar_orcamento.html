@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <title>✏️ Editar Orçamento: {{ orcamento.nome }}</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: linear-gradient(to bottom, #f0f8ff, #e6f2ff);
@@ -54,8 +58,8 @@
     input[type="text"],
     input[type="number"],
     select {
-      width: 93%;
-      padding: 8px;
+      width: 100%;
+      padding: 10px;
       font-size: 15px;
       border-radius: 5px;
       border: 1px solid #ccc;
@@ -84,20 +88,20 @@
       background-color: #eaf3fc;
     }
 
-    /* Botões lado a lado */
     .btn-group {
       display: flex;
       justify-content: center;
       gap: 10px;
       margin-top: 20px;
+      flex-wrap: wrap;
     }
 
     .btn-voltar,
     .btn-submit {
-      padding: 6px 16px;
-      font-size: 14px;
-      border-radius: 5px;
-      min-width: 100px;
+      padding: 10px 20px;
+      font-size: 15px;
+      border-radius: 6px;
+      min-width: 120px;
       cursor: pointer;
       text-align: center;
       text-decoration: none;
@@ -124,45 +128,54 @@
       background-color: #45a049;
     }
 
-    @media (max-width: 600px) {
+    /* RESPONSIVO */
+    @media (max-width: 768px) {
+      input[type="text"],
+      input[type="number"],
+      select {
+        width: 100%;
+      }
+
+      .btn-group {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .btn-voltar,
+      .btn-submit {
+        width: 100%;
+        font-size: 16px;
+      }
+
+      /* TABELA RESPONSIVA */
       table, thead, tbody, th, td, tr {
         display: block;
       }
 
-      thead tr {
+      thead {
         display: none;
       }
 
-      tr {
-        margin-bottom: 15px;
+      tbody tr {
+        margin-bottom: 20px;
         border: 1px solid #ccc;
+        border-radius: 8px;
         padding: 10px;
-        border-radius: 5px;
+        background-color: #fff;
       }
 
       td {
         border: none;
-        padding: 5px 10px;
+        padding: 8px 10px;
         position: relative;
       }
 
       td::before {
         content: attr(data-label);
         font-weight: bold;
-        display: inline-block;
-        width: 140px;
-      }
-
-      .btn-group {
-        flex-direction: column;
-        gap: 12px;
-      }
-
-      .btn-voltar,
-      .btn-submit {
-        font-size: 16px;
-        padding: 12px 0;
-        min-width: 100%;
+        display: block;
+        margin-bottom: 5px;
+        color: #2c3e50;
       }
     }
   </style>
