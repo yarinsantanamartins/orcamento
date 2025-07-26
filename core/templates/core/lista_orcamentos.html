@@ -37,6 +37,7 @@
             align-items: center;
             transition: transform 0.2s;
             gap: 10px;
+            word-break: break-word;
         }
 
         .orcamento-item:hover {
@@ -49,25 +50,28 @@
             font-weight: bold;
             color: #333;
             flex-grow: 1;
+            min-width: 0; /* para permitir quebra */
         }
 
         .btn-group {
             display: flex;
             gap: 8px;
+            flex-shrink: 0;
         }
 
         .ver-btn, .editar-btn {
             background-color: #4CAF50;
             color: white;
-            padding: 4px 10px;
+            padding: 6px 14px;
             border: none;
             border-radius: 5px;
             text-decoration: none;
-            font-size: 13px;
+            font-size: 14px;
             transition: background-color 0.3s;
             display: inline-block;
             cursor: pointer;
             text-align: center;
+            white-space: nowrap;
         }
 
         .ver-btn:hover {
@@ -106,21 +110,36 @@
         }
 
         @media (max-width: 600px) {
+            .orcamento-lista {
+                max-width: 100%;
+                padding: 0 10px;
+            }
             .orcamento-item {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 10px;
+                gap: 8px;
+                padding: 15px;
             }
 
-            .ver-btn, .editar-btn {
-                width: 93%;
-                text-align: center;
+            .orcamento-nome {
+                font-size: 16px;
+                font-weight: 600;
+                margin-bottom: 8px;
+                word-break: break-word;
             }
 
             .btn-group {
                 width: 100%;
                 justify-content: flex-start;
                 gap: 10px;
+            }
+
+            .ver-btn, .editar-btn {
+                width: 48%;
+                font-size: 16px;
+                padding: 10px 0;
+                text-align: center;
+                white-space: normal;
             }
         }
     </style>

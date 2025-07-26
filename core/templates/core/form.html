@@ -2,12 +2,13 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>👤 Cadastrar Cliente</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
       background: linear-gradient(to bottom, #f0f8ff, #e6f2ff);
-      padding: 30px;
+      padding: 30px 15px;
       margin: 0;
       color: #2c3e50;
     }
@@ -15,6 +16,7 @@
     h1 {
       text-align: center;
       margin-bottom: 30px;
+      font-size: 28px;
     }
 
     form {
@@ -24,27 +26,31 @@
       padding: 25px 30px;
       border-radius: 10px;
       box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+      box-sizing: border-box;
     }
 
     label {
       font-weight: bold;
       margin-top: 12px;
       display: block;
+      font-size: 16px;
     }
 
-    input, textarea {
+    input, textarea, select {
       width: 100%;
-      padding: 8px;
+      padding: 10px;
       font-size: 16px;
       margin-top: 5px;
       border-radius: 5px;
       border: 1px solid #ccc;
+      box-sizing: border-box;
+      font-family: inherit;
     }
 
     button {
       margin-top: 25px;
       width: 100%;
-      padding: 12px;
+      padding: 14px;
       font-size: 18px;
       font-weight: bold;
       background-color: #3498db;
@@ -52,6 +58,7 @@
       border: none;
       border-radius: 8px;
       cursor: pointer;
+      transition: background-color 0.3s ease;
     }
 
     button:hover {
@@ -61,12 +68,52 @@
     .voltar {
       text-align: center;
       margin-top: 20px;
+      font-size: 16px;
     }
 
     .voltar a {
       text-decoration: none;
       color: #3498db;
       font-weight: bold;
+      transition: color 0.3s ease;
+    }
+    .voltar a:hover {
+      color: #2c80b4;
+    }
+
+    /* Responsividade */
+    @media (max-width: 480px) {
+      body {
+        padding: 20px 10px;
+      }
+
+      h1 {
+        font-size: 24px;
+        margin-bottom: 20px;
+      }
+
+      form {
+        padding: 20px 15px;
+        max-width: 100%;
+      }
+
+      label {
+        font-size: 15px;
+      }
+
+      input, textarea, select {
+        font-size: 15px;
+        padding: 12px;
+      }
+
+      button {
+        font-size: 16px;
+        padding: 12px;
+      }
+
+      .voltar {
+        font-size: 14px;
+      }
     }
   </style>
 </head>
@@ -79,7 +126,7 @@
       <label for="{{ field.id_for_label }}">{{ field.label }}</label>
       {{ field }}
       {% if field.errors %}
-        <div style="color: red;">{{ field.errors }}</div>
+        <div style="color: red; font-size: 14px; margin-top: 4px;">{{ field.errors }}</div>
       {% endif %}
     {% endfor %}
     <button type="submit">Salvar Cliente</button>

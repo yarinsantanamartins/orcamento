@@ -2,6 +2,7 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>➕ Novo Orçamento</title>
   <style>
     body {
@@ -28,23 +29,18 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
 
+    .step {
+      display: none;
+    }
+
+    .step.active {
+      display: block;
+    }
+
     fieldset {
-      margin-bottom: 25px;
-      padding: 20px;
-      border: 2px solid #dce3f0;
-      border-radius: 8px;
-      background-color: #f9fcff;
-    }
-
-    legend {
-      font-weight: bold;
-      font-size: 18px;
-      color: #1a5276;
-      padding: 0 8px;
-    }
-
-    p {
-      margin-bottom: 15px;
+      border: none;
+      margin: 0;
+      padding: 0;
     }
 
     label {
@@ -55,28 +51,25 @@
     input[type="number"],
     select {
       width: 93%;
-      padding: 8px;
-      font-size: 15px;
+      padding: 10px;
+      font-size: 16px;
       border-radius: 5px;
       border: 1px solid #ccc;
       margin-top: 5px;
-    }
-
-    input[type="checkbox"] {
-      transform: scale(1.2);
-      margin-right: 8px;
+      margin-bottom: 20px;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      background: white;
+      margin-top: 20px;
     }
 
     th, td {
       padding: 10px;
       border: 1px solid #ddd;
       text-align: left;
+      font-size: 15px;
       vertical-align: middle;
     }
 
@@ -84,23 +77,23 @@
       background-color: #eaf3fc;
     }
 
-    /* Botões lado a lado */
     .btn-group {
       display: flex;
-      justify-content: center;
-      gap: 10px;
+      justify-content: space-between;
       margin-top: 20px;
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
     .btn-voltar,
+    .btn-proximo,
     .btn-submit {
-      padding: 6px 16px;
-      font-size: 14px;
+      padding: 12px 16px;
+      font-size: 16px;
       border-radius: 5px;
-      min-width: 100px;
+      min-width: 120px;
       cursor: pointer;
       text-align: center;
-      text-decoration: none;
       font-weight: 600;
       transition: background-color 0.3s;
       border: none;
@@ -116,6 +109,14 @@
       background-color: #2c7acb;
     }
 
+    .btn-proximo {
+      background-color: #4CAF50;
+    }
+
+    .btn-proximo:hover {
+      background-color: #45a049;
+    }
+
     .btn-submit {
       background-color: #4CAF50;
     }
@@ -125,6 +126,22 @@
     }
 
     @media (max-width: 600px) {
+      h1 {
+        font-size: 24px;
+      }
+
+      form {
+        padding: 20px 15px;
+      }
+
+      input[type="text"],
+      input[type="number"],
+      select {
+        width: 92%;
+        font-size: 17px;
+        padding: 12px;
+      }
+
       table, thead, tbody, th, td, tr {
         display: block;
       }
@@ -144,6 +161,7 @@
         border: none;
         padding: 5px 10px;
         position: relative;
+        font-size: 16px;
       }
 
       td::before {
@@ -159,9 +177,10 @@
       }
 
       .btn-voltar,
+      .btn-proximo,
       .btn-submit {
         font-size: 16px;
-        padding: 12px 0;
+        padding: 14px 0;
         min-width: 100%;
       }
     }
@@ -175,60 +194,136 @@
   {% csrf_token %}
   {{ form.non_field_errors }}
 
-  <fieldset>
-    <legend>📄 Dados do Orçamento</legend>
+  <div class="step active">
+    <label>{{ form.nome.label_tag }}</label>
+    {{ form.nome }}
+    <div class="btn-group">
+      <button type="button" class="btn-proximo btn-proximo" onclick="nextStep()">Próximo</button>
+    </div>
+  </div>
 
-    <p>{{ form.nome.label_tag }}<br>{{ form.nome }}</p>
-    <p>{{ form.cliente.label_tag }}<br>{{ form.cliente }}</p>
-    <p>{{ form.quantidade.label_tag }}<br>{{ form.quantidade }}</p>
-    <p>{{ form.tempo_por_unidade.label_tag }}<br>{{ form.tempo_por_unidade }}</p>
-    <p>{{ form.margem_lucro.label_tag }}<br>{{ form.margem_lucro }}</p>
-    <p>{{ form.folhas_pb.label_tag }}<br>{{ form.folhas_pb }}</p>
-    <p>{{ form.folhas_coloridas.label_tag }}<br>{{ form.folhas_coloridas }}</p>
+  <div class="step">
+    <label>{{ form.cliente.label_tag }}</label>
+    {{ form.cliente }}
+    <div class="btn-group">
+      <button type="button" class="btn-voltar" onclick="prevStep()">Voltar</button>
+      <button type="button" class="btn-proximo" onclick="nextStep()">Próximo</button>
+    </div>
+  </div>
 
-    <p>
-      <label>
-        {{ form.materiais_cliente_fornece }}
-        {{ form.materiais_cliente_fornece.label }}
-      </label>
-    </p>
-  </fieldset>
+  <div class="step">
+    <label>{{ form.quantidade.label_tag }}</label>
+    {{ form.quantidade }}
+    <div class="btn-group">
+      <button type="button" class="btn-voltar" onclick="prevStep()">Voltar</button>
+      <button type="button" class="btn-proximo" onclick="nextStep()">Próximo</button>
+    </div>
+  </div>
 
-  <fieldset>
-    <legend>📦 Materiais Utilizados</legend>
-    {{ formset.management_form }}
+  <div class="step">
+    <label>{{ form.tempo_por_unidade.label_tag }}</label>
+    {{ form.tempo_por_unidade }}
+    <div class="btn-group">
+      <button type="button" class="btn-voltar" onclick="prevStep()">Voltar</button>
+      <button type="button" class="btn-proximo" onclick="nextStep()">Próximo</button>
+    </div>
+  </div>
 
-    <table>
-      <thead>
-        <tr>
-          <th>Material</th>
-          <th>Quantidade Utilizada</th>
-          <th>Cliente Fornece?</th>
-          <th>Remover</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for form in formset %}
-        <tr>
-          <td data-label="Material">{{ form.material }}</td>
-          <td data-label="Quantidade Utilizada">{{ form.quantidade_utilizada }}</td>
-          <td data-label="Cliente Fornece?">{{ form.fornecido_pelo_cliente }}</td>
-          <td data-label="Remover">{% if form.DELETE %}{{ form.DELETE }} Remover{% endif %}</td>
-        </tr>
-        {% empty %}
-        <tr>
-          <td colspan="4" style="text-align: center;">Nenhum material adicionado.</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </fieldset>
+  <div class="step">
+    <label>{{ form.margem_lucro.label_tag }}</label>
+    {{ form.margem_lucro }}
+    <div class="btn-group">
+      <button type="button" class="btn-voltar" onclick="prevStep()">Voltar</button>
+      <button type="button" class="btn-proximo" onclick="nextStep()">Próximo</button>
+    </div>
+  </div>
 
-  <div class="btn-group">
-    <a href="{% url 'dashboard' %}" class="btn-voltar">🔙 Voltar</a>
-    <button type="submit" class="btn-submit">💰 Calcular</button>
+  <div class="step">
+    <label>{{ form.folhas_pb.label_tag }}</label>
+    {{ form.folhas_pb }}
+    <label>{{ form.folhas_coloridas.label_tag }}</label>
+    {{ form.folhas_coloridas }}
+    <div class="btn-group">
+      <button type="button" class="btn-voltar" onclick="prevStep()">Voltar</button>
+      <button type="button" class="btn-proximo" onclick="nextStep()">Próximo</button>
+    </div>
+  </div>
+
+  <div class="step">
+    <label>
+      {{ form.materiais_cliente_fornece }}
+      {{ form.materiais_cliente_fornece.label }}
+    </label>
+    <div class="btn-group">
+      <button type="button" class="btn-voltar" onclick="prevStep()">Voltar</button>
+      <button type="button" class="btn-proximo" onclick="nextStep()">Próximo</button>
+    </div>
+  </div>
+
+  <div class="step">
+    <fieldset>
+      <legend>📦 Materiais Utilizados</legend>
+      {{ formset.management_form }}
+      <table>
+        <thead>
+          <tr>
+            <th>Material</th>
+            <th>Quantidade Utilizada</th>
+            <th>Cliente Fornece?</th>
+            <th>Remover</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for form in formset %}
+          <tr>
+            <td data-label="Material">{{ form.material }}</td>
+            <td data-label="Quantidade Utilizada">{{ form.quantidade_utilizada }}</td>
+            <td data-label="Cliente Fornece?">{{ form.fornecido_pelo_cliente }}</td>
+            <td data-label="Remover">{% if form.DELETE %}{{ form.DELETE }} Remover{% endif %}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="4" style="text-align: center;">Nenhum material adicionado.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </fieldset>
+    <div class="btn-group">
+      <button type="button" class="btn-voltar" onclick="prevStep()">Voltar</button>
+      <button type="submit" class="btn-submit">💰 Calcular</button>
+    </div>
   </div>
 </form>
+
+<script>
+  let currentStep = 0;
+  const steps = document.querySelectorAll(".step");
+
+  function showStep(index) {
+    steps.forEach((step, i) => {
+      step.classList.toggle("active", i === index);
+    });
+  }
+
+  function nextStep() {
+    if (currentStep < steps.length - 1) {
+      currentStep++;
+      showStep(currentStep);
+      window.scrollTo(0, 0);
+    }
+  }
+
+  function prevStep() {
+    if (currentStep > 0) {
+      currentStep--;
+      showStep(currentStep);
+      window.scrollTo(0, 0);
+    }
+  }
+
+  showStep(currentStep);
+</script>
 
 </body>
 </html>
