@@ -2,6 +2,7 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>✏️ Editar Orçamento: {{ orcamento.nome }}</title>
   <style>
     * {
@@ -47,12 +48,10 @@
       padding: 0 8px;
     }
 
-    p {
-      margin-bottom: 15px;
-    }
-
     label {
       font-weight: 500;
+      display: block;
+      margin-bottom: 5px;
     }
 
     input[type="text"],
@@ -63,7 +62,7 @@
       font-size: 15px;
       border-radius: 5px;
       border: 1px solid #ccc;
-      margin-top: 5px;
+      margin-bottom: 10px;
     }
 
     input[type="checkbox"] {
@@ -128,12 +127,18 @@
       background-color: #45a049;
     }
 
+    .errorlist {
+      color: red;
+      font-size: 14px;
+      margin: 0 0 10px 0;
+      list-style-type: none;
+      padding-left: 0;
+    }
+
     /* RESPONSIVO */
     @media (max-width: 768px) {
-      input[type="text"],
-      input[type="number"],
-      select {
-        width: 100%;
+      form {
+        padding: 20px 15px;
       }
 
       .btn-group {
@@ -147,7 +152,6 @@
         font-size: 16px;
       }
 
-      /* TABELA RESPONSIVA */
       table, thead, tbody, th, td, tr {
         display: block;
       }
@@ -186,18 +190,24 @@
 
 <form method="post">
   {% csrf_token %}
-  {{ form.non_field_errors }}
+
+  {% if form.non_field_errors %}
+    <ul class="errorlist">{{ form.non_field_errors }}</ul>
+  {% endif %}
+  {% if formset.non_form_errors %}
+    <ul class="errorlist">{{ formset.non_form_errors }}</ul>
+  {% endif %}
 
   <fieldset>
     <legend>📄 Dados do Orçamento</legend>
 
-    <p>{{ form.nome.label_tag }}<br>{{ form.nome }}</p>
-    <p>{{ form.cliente.label_tag }}<br>{{ form.cliente }}</p>
-    <p>{{ form.quantidade.label_tag }}<br>{{ form.quantidade }}</p>
-    <p>{{ form.tempo_por_unidade.label_tag }}<br>{{ form.tempo_por_unidade }}</p>
-    <p>{{ form.margem_lucro.label_tag }}<br>{{ form.margem_lucro }}</p>
-    <p>{{ form.folhas_pb.label_tag }}<br>{{ form.folhas_pb }}</p>
-    <p>{{ form.folhas_coloridas.label_tag }}<br>{{ form.folhas_coloridas }}</p>
+    {% for field in form.visible_fields %}
+      <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+      {{ field }}
+      {% if field.errors %}
+        <ul class="errorlist">{{ field.errors }}</ul>
+      {% endif %}
+    {% endfor %}
   </fieldset>
 
   <fieldset>
@@ -216,14 +226,21 @@
       <tbody>
         {% for form in formset %}
         <tr>
-          <td data-label="Material">{{ form.material }}</td>
-          <td data-label="Quantidade Utilizada">{{ form.quantidade_utilizada }}</td>
+          <td data-label="Material">
+            {{ form.id }}  <!-- campo oculto obrigatório -->
+            {{ form.material }}
+            {% if form.material.errors %}
+              <ul class="errorlist">{{ form.material.errors }}</ul>
+            {% endif %}
+          </td>
+          <td data-label="Quantidade Utilizada">
+            {{ form.quantidade_utilizada }}
+            {% if form.quantidade_utilizada.errors %}
+              <ul class="errorlist">{{ form.quantidade_utilizada.errors }}</ul>
+            {% endif %}
+          </td>
           <td data-label="Cliente Fornece?">{{ form.fornecido_pelo_cliente }}</td>
           <td data-label="Remover">{% if form.DELETE %}{{ form.DELETE }}{% endif %}</td>
-        </tr>
-        {% empty %}
-        <tr>
-          <td colspan="4" style="text-align: center;">Nenhum material adicionado.</td>
         </tr>
         {% endfor %}
       </tbody>

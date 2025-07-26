@@ -225,12 +225,14 @@ def editar_orcamento(request, pk):
         formset = MateriaisUtilizadosFormSet(request.POST, instance=orcamento)
 
         if form.is_valid() and formset.is_valid():
+            print("Formulários válidos, salvando...")
             orc = form.save(commit=False)
             orc.empresa = orcamento.empresa  # mantém a empresa original aqui
             orc.save()
             formset.save()
-            return redirect('resultado_orcamento', pk=orcamento.pk)
+            return redirect('resultado_orcamento', pk=orc.pk)
     else:
+        
         form = OrcamentoForm(instance=orcamento)
         formset = MateriaisUtilizadosFormSet(instance=orcamento)
 
