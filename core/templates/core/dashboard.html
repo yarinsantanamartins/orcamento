@@ -12,19 +12,19 @@
       background: linear-gradient(to bottom, #f0f8ff, #e6f2ff);
     }
 
-    /* LOGO CENTRALIZADA FORA DO SIDEBAR */
     .top-logo {
       position: fixed;
       top: 10px;
       left: 50%;
       transform: translateX(-50%);
-      z-index: 1102;
+      z-index: 900;
       height: 60px;
       display: flex;
       align-items: center;
       justify-content: center;
       background-color: transparent;
     }
+
 
     .top-logo img {
       max-height: 100px;
@@ -197,6 +197,7 @@
   <button class="closebtn" onclick="toggleSidebar()">×</button>
   <a href="{% url 'parametros_sistema' %}">⚙️ Parâmetros do Sistema</a>
   <a href="{% url 'cadastrar_produto' %}">📦 Cadastrar Produto</a>
+  <a href="{% url 'cadastrar_cliente' %}">👤 Cadastrar Cliente</a>
 </div>
 
 <form method="POST" action="{% url 'logout' %}" style="display:inline;">
@@ -214,7 +215,6 @@
 
   <a href="{% url 'lista_orcamentos' %}" class="btn">📋 Ver Orçamentos</a>
   <a href="{% url 'novo_orcamento' %}" class="btn">➕ Novo Orçamento</a>
-  <a href="{% url 'cadastrar_cliente' %}" class="btn">👤 Cadastrar Cliente</a>
 </div>
 
 <script>
