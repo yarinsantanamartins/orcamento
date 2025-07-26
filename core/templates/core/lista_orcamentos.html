@@ -9,6 +9,8 @@
             background: linear-gradient(to bottom, #f0f8ff, #e6f2ff);
             padding: 20px;
             margin: 0;
+            min-height: 100vh;
+            box-sizing: border-box;
         }
 
         h1 {
@@ -21,12 +23,13 @@
         .orcamento-lista {
             list-style: none;
             padding: 0;
-            max-width: 900px;
             margin: 0 auto;
-            display: flex;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 20px;
-            justify-content: center;
+            width: 100%;
+            max-width: 1200px;
+            box-sizing: border-box;
         }
 
         .orcamento-item {
@@ -35,7 +38,6 @@
             padding: 20px;
             border-radius: 12px;
             box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-            width: 280px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -115,22 +117,14 @@
         }
 
         /* Responsividade */
-        @media (max-width: 640px) {
-            .orcamento-lista {
-                justify-content: center;
-            }
-            .orcamento-item {
-                width: 100%;
-                max-width: 400px;
+        @media (max-width: 480px) {
+            .ver-btn, .editar-btn {
+                font-size: 16px;
+                padding: 14px 0;
+                white-space: normal;
             }
             .btn-group {
                 flex-direction: column;
-            }
-            .ver-btn, .editar-btn {
-                width: 100%;
-                white-space: normal;
-                font-size: 16px;
-                padding: 12px 0;
             }
         }
     </style>
@@ -142,7 +136,7 @@
     <ul class="orcamento-lista">
         {% for orcamento in orcamentos %}
             <li class="orcamento-item">
-                <span class="orcamento-nome">{{ orcamento.nome }} - {{ orcamento.cliente.nome }}</span>
+                <span class="orcamento-nome">📦 {{ orcamento.nome }} - {{ orcamento.cliente.nome }}</span>
                 <div class="btn-group">
                     <a class="ver-btn" href="{% url 'resultado_orcamento' orcamento.pk %}">🔍 Ver</a>
                     <a class="editar-btn" href="{% url 'editar_orcamento' orcamento.pk %}">✏️ Editar</a>
