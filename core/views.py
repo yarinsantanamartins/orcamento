@@ -80,6 +80,7 @@ def resultado_orcamento(request, pk):
 
     custo_pb = Decimal(orcamento.folhas_pb) * config.custo_impressao_pb
     custo_colorida = Decimal(orcamento.folhas_coloridas) * config.custo_impressao_colorida
+    custo_impressao_total = custo_pb + custo_colorida
 
     materiais = []
     custo_materiais = Decimal('0.00')
@@ -110,17 +111,13 @@ def resultado_orcamento(request, pk):
         'valor_colorida_unit': config.custo_impressao_colorida,
         'custo_materiais': custo_materiais.quantize(Decimal('0.01')),
         'materiais_detalhados': materiais,
-        'custo_mao_obra_total': (resultado['custo_mao_obra_unit'] * quantidade).quantize(Decimal('0.01')),
-        'custo_materiais_total': custo_materiais.quantize(Decimal('0.01')),
-        'custo_despesas_total': (resultado['custo_despesas_unit'] * quantidade).quantize(Decimal('0.01')),
-        'custo_impressao_total': (custo_pb + custo_colorida).quantize(Decimal('0.01')),
+        'custo_impressao_total': custo_impressao_total.quantize(Decimal('0.01')),
     })
 
     return render(request, 'core/resultado_orcamento.html', {
         'orcamento': orcamento,
         'resultado': resultado
     })
-
 
 # =======================
 # DASHBOARD
@@ -248,3 +245,15 @@ def excluir_orcamento(request, pk):
     orcamento = get_object_or_404(Orcamento, pk=pk)
     orcamento.delete()
     return redirect('lista_orcamentos')
+
+def detalhes_preco(request, pk):
+    orcamento = get_object_or_404(Orcamento, pk=pk)
+    resultado = orcamento.calcular()
+
+    tempo_total_minutos = orcamento.tempo_por_unidade * orcamento.quantidade
+
+    return render(request, 'core/detalhes_preco.html', {
+        'orcamento': orcamento,
+        'resultado': resultado,
+        'tempo_total_minutos': tempo_total_minutos,
+    })

@@ -121,11 +121,11 @@
     <div class="card">
       <p><strong>Folhas PB:</strong> {{ orcamento.folhas_pb }}</p>
       <p><strong>Valor por folha PB:</strong> R$ {{ resultado.valor_pb_unit }}</p>
-      <p><strong>Total PB:</strong> R$ {{ resultado.custo_pb }}</p>
+      <p><strong>Total PB:</strong> R$ {{ resultado.valor_impressao_pb }}</p>
       <hr>
       <p><strong>Folhas Coloridas:</strong> {{ orcamento.folhas_coloridas }}</p>
       <p><strong>Valor por folha colorida:</strong> R$ {{ resultado.valor_colorida_unit }}</p>
-      <p><strong>Total Colorida:</strong> R$ {{ resultado.custo_colorida }}</p>
+      <p><strong>Total Colorida:</strong> R$ {{ resultado.valor_impressao_colorida }}</p>
     </div>
   </div>
 
@@ -134,22 +134,21 @@
   <div class="grid">
     <div class="card">
       <p>Mão de Obra (un): <strong>R$ {{ resultado.custo_mao_obra_unit }}</strong>  
-      <br>Total: <strong>R$ {{ resultado.custo_mao_obra_total }}</strong></p>
+      <br>Total: <strong>R$ {{ resultado.custo_mao_obra }}</strong></p>
 
-      <p>Impressão (un): <strong>R$ {{ resultado.custo_impressao_unit }}</strong>  
-      <br>Total: <strong>R$ {{ resultado.custo_impressao_total }}</strong></p>
+      <p>Impressão (total): <strong>R$ {{ resultado.valor_total_impressao }}</strong></p>
     </div>
   </div>
 
-  <!-- Materiais -->
+  <!-- Materiais e Despesas -->
   <div class="section-title">🧰 Materiais e Outras Despesas</div>
   <div class="grid">
     <div class="card">
       <p>Materiais (un): <strong>R$ {{ resultado.custo_materiais_unit }}</strong>  
-      <br>Total: <strong>R$ {{ resultado.custo_materiais_total }}</strong></p>
+      <br>Total: <strong>R$ {{ resultado.custo_materiais }}</strong></p>
 
       <p>Despesas Extras (un): <strong>R$ {{ resultado.custo_despesas_unit }}</strong>  
-      <br>Total: <strong>R$ {{ resultado.custo_despesas_total }}</strong></p>
+      <br>Total: <strong>R$ {{ resultado.custo_despesas }}</strong></p>
     </div>
   </div>
 
@@ -170,7 +169,7 @@
     <p style="margin-left: 10px;">📦 O cliente forneceu todos os materiais.</p>
   {% endif %}
 
-  <!-- Totais -->
+    <!-- Totais -->
   <div class="section-title">📊 Resumo Financeiro</div>
   <div class="grid">
     <div class="card total">
@@ -182,12 +181,43 @@
       <p><strong>Preço Final de Venda:</strong> R$ {{ resultado.preco_unitario }}</p>
       <p><strong>Preço de Venda Total:</strong> R$ {{ resultado.preco_total }}</p>
     </div>
+  </div>
+    <!-- Valor Final para Venda em Destaque -->
+  <div style="margin-top: 40px; text-align: center;">
+    <div style="
+      display: inline-block;
+      background-color: #27ae60;
+      color: white;
+      padding: 30px 50px;
+      font-size: 25px;
+      font-weight: bold;
+      border-radius: 15px;
+      box-shadow: 0 6px 15px rgba(39, 174, 96, 0.6);
+      border: 5px solid #1f8f4e;
+      ">
+      Valor Final para Venda: R$ {{ resultado.preco_unitario }}
 
-    <div class="card lucro">
-      <p><strong>Lucro Total:</strong> R$ {{ resultado.lucro }}</p>
+      <br><br>
+      <a href="{% url 'detalhes_preco' orcamento.pk %}" 
+         style="
+           display: inline-block;
+           background-color: #1f8f4e;
+           color: white;
+           padding: 12px 30px;
+           font-size: 20px;
+           font-weight: bold;
+           border-radius: 10px;
+           text-decoration: none;
+           box-shadow: 0 4px 8px rgba(31, 143, 78, 0.8);
+           transition: background-color 0.3s ease;
+         "
+         onmouseover="this.style.backgroundColor='#166837';"
+         onmouseout="this.style.backgroundColor='#1f8f4e';"
+      >
+        Ver detalhes do cálculo
+      </a>
     </div>
   </div>
-
   <!-- Botões -->
   <div class="buttons">
     <a href="{% url 'lista_orcamentos' %}">🔙 Voltar</a>

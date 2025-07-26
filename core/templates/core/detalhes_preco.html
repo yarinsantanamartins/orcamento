@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>🧾 Detalhes do Cálculo do Orçamento - {{ orcamento.nome }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom, #f9fbfc, #e4f0f6);
+      margin: 0;
+      padding: 20px;
+      color: #2c3e50;
+      line-height: 1.6;
+      word-wrap: break-word;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container {
+      max-width: 900px;
+      background: white;
+      margin: 20px auto;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      font-weight: 700;
+      margin-bottom: 40px;
+      font-size: 28px;
+      color: #34495e;
+      letter-spacing: 1px;
+    }
+    h2 {
+      border-bottom: 3px solid #3498db;
+      padding-bottom: 8px;
+      margin-top: 30px;
+      margin-bottom: 15px;
+      font-weight: 600;
+      color: #2980b9;
+      font-size: 22px;
+    }
+    h3 {
+      color: #2c3e50;
+      margin-top: 15px;
+      margin-bottom: 8px;
+      font-weight: 600;
+      font-size: 18px;
+    }
+    p, ul {
+      font-size: 16px;
+      margin: 6px 0 14px 0;
+      color: #34495e;
+    }
+    ul {
+      padding-left: 24px;
+    }
+    strong {
+      color: #1c2833;
+    }
+    .highlight, .final-price {
+      background: #d6eaf8;
+      padding: 20px 25px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 22px;
+      margin-top: 30px;
+      text-align: center;
+      color: #117a8b;
+      box-shadow: 0 2px 12px rgba(17, 122, 139, 0.3);
+      user-select: all;
+      word-break: break-word;
+    }
+    .final-price {
+      background: #27ae60;
+      color: white;
+      font-size: 28px;
+      box-shadow: 0 4px 18px rgba(39, 174, 96, 0.6);
+      margin-bottom: 40px;
+    }
+    .section-block {
+      background: #f7f9fb;
+      border-left: 5px solid #3498db;
+      border-radius: 8px;
+      padding: 18px 28px;
+      margin-bottom: 25px;
+    }
+    a.back-link {
+      display: inline-block;
+      margin-top: 10px;
+      text-decoration: none;
+      font-weight: 600;
+      color: #2980b9;
+      border: 2px solid #2980b9;
+      padding: 10px 20px;
+      border-radius: 6px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      word-break: break-word;
+    }
+    a.back-link:hover {
+      background-color: #2980b9;
+      color: white;
+    }
+
+    /* RESPONSIVO */
+    @media (max-width: 600px) {
+      body {
+        padding: 10px 15px;
+      }
+      .container {
+        max-width: 100%;
+        padding: 20px 15px;
+        margin: 10px;
+        border-radius: 10px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+      }
+      h1 {
+        font-size: 24px;
+        margin-bottom: 30px;
+      }
+      h2 {
+        font-size: 20px;
+        margin-top: 25px;
+        margin-bottom: 12px;
+      }
+      h3 {
+        font-size: 16px;
+        margin-top: 12px;
+        margin-bottom: 6px;
+      }
+      p, ul {
+        font-size: 14px;
+        margin: 6px 0 12px 0;
+      }
+      ul {
+        padding-left: 18px;
+      }
+      .highlight, .final-price {
+        font-size: 20px;
+        padding: 15px 20px;
+        margin-top: 25px;
+      }
+      .final-price {
+        font-size: 24px;
+        margin-bottom: 35px;
+      }
+      a.back-link {
+        width: 100%;
+        text-align: center;
+        padding: 12px 0;
+        font-size: 16px;
+        margin-top: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧾 Detalhes do Cálculo do Orçamento: {{ orcamento.nome }}</h1>
+
+    <div class="section-block">
+      <h2>⏱ Mão de Obra</h2>
+      <p><strong>Tempo por unidade:</strong> {{ resultado.tempo_por_unidade }} minutos</p>
+      <p><strong>Quantidade:</strong> {{ orcamento.quantidade }} unidades</p>
+      <p><strong>Tempo total:</strong> {{ resultado.tempo_por_unidade }} × {{ orcamento.quantidade }} = 
+      <strong>{{ tempo_total_minutos|floatformat:2 }} minutos</strong></p>
+
+      <h3>Cálculo do custo da mão de obra:</h3>
+      <ul>
+        <li>Valor da hora trabalhada: <strong>R$ {{ resultado.valor_hora }}</strong></li>
+        <li>Valor do minuto trabalhado: <strong>R$ {{ resultado.valor_minuto }}</strong></li>
+        <li>Custo mão de obra total = tempo total (em minutos) × valor do minuto</li>
+      </ul>
+      <p><strong>Custo mão de obra total:</strong> R$ {{ resultado.custo_mao_obra }}</p>
+      <p><strong>Custo mão de obra por unidade:</strong> R$ {{ resultado.custo_mao_obra_unit }}</p>
+    </div>
+
+    <div class="section-block">
+      <h2>📦 Materiais</h2>
+      {% if resultado.materiais_detalhados %}
+        <p>Materiais usados (não fornecidos pelo cliente):</p>
+        <ul>
+          {% for mat in resultado.materiais_detalhados %}
+            <li>{{ mat.nome }} — {{ mat.quantidade }} {{ mat.unidade }} × R$ {{ mat.valor_unitario }} = <strong>R$ {{ mat.total }}</strong></li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>O cliente forneceu todos os materiais.</p>
+      {% endif %}
+      <p><strong>Custo total dos materiais:</strong> R$ {{ resultado.custo_materiais }}</p>
+      <p><strong>Custo materiais por unidade:</strong> R$ {{ resultado.custo_materiais_unit }}</p>
+    </div>
+
+    <div class="section-block">
+      <h2>💡 Despesas Extras</h2>
+      <p>Estas despesas representam custos de energia elétrica, internet, entre outros, calculados como percentual sobre a soma da mão de obra e materiais.</p>
+      <p><strong>Custo despesas totais:</strong> R$ {{ resultado.custo_despesas }}</p>
+      <p><strong>Custo despesas por unidade:</strong> R$ {{ resultado.custo_despesas_unit }}</p>
+    </div>
+
+    <div class="section-block">
+      <h2>🖨 Impressão</h2>
+      <p><strong>Folhas preto e branco:</strong> {{ orcamento.folhas_pb }} × R$ {{ resultado.valor_pb_unit }} = R$ {{ resultado.valor_impressao_pb }}</p>
+      <p><strong>Folhas coloridas:</strong> {{ orcamento.folhas_coloridas }} × R$ {{ resultado.valor_colorida_unit }} = R$ {{ resultado.valor_impressao_colorida }}</p>
+      <p><strong>Total impressão:</strong> R$ {{ resultado.valor_total_impressao }}</p>
+    </div>
+
+    <div class="section-block">
+      <h2>💰 Totais e Preço Final</h2>
+      <p><strong>Custo total (mão de obra + materiais + despesas):</strong> R$ {{ resultado.custo_total }}</p>
+      <p><strong>Margem de lucro aplicada:</strong> {{ orcamento.margem_lucro|default:"Margem padrão" }}%</p>
+      <p><strong>Lucro calculado sobre custo total:</strong> R$ {{ resultado.lucro }}</p>
+
+      <p><strong>Preço final de venda (total):</strong> 
+        R$ {{ resultado.preco_total }} <br />
+        (Inclui custo total + lucro + custo total de impressão)
+      </p>
+      <p><strong>Preço final de venda (por unidade):</strong> R$ {{ resultado.preco_unitario }}</p>
+    </div>
+
+    <div class="final-price">
+      Preço Final de Venda Total<br>
+      <span style="font-size: 36px;">R$ {{ resultado.preco_total }}</span>
+      <br><br>
+      Preço Final de Venda por Unidade<br>
+      <span style="font-size: 28px;">R$ {{ resultado.preco_unitario }}</span>
+    </div>
+
+    <a href="{% url 'resultado_orcamento' orcamento.pk %}" class="back-link">← Voltar ao resultado</a>
+  </div>
+</body>
+</html>

@@ -100,13 +100,12 @@ class Orcamento(models.Model):
         tempo_total_horas = (Decimal(self.tempo_por_unidade) * Decimal(self.quantidade)) / Decimal(60)
         custo_mao_obra = tempo_total_horas * valor_hora
 
-        # Materiais: calcula custo só para materiais NÃO fornecidos pelo cliente
+        # Materiais (apenas os não fornecidos pelo cliente)
         materiais_detalhados = []
         custo_materiais = Decimal('0.00')
         for uso in self.materiaisutilizados.all():
             material = uso.material
             total = material.valor_unitario() * uso.quantidade_utilizada
-
             fornecido = getattr(uso, 'fornecido_pelo_cliente', False)
             if not fornecido:
                 custo_materiais += total
@@ -114,19 +113,21 @@ class Orcamento(models.Model):
             materiais_detalhados.append({
                 "nome": material.nome,
                 "quantidade": uso.quantidade_utilizada,
-                "unidade": "un",  # ajuste conforme seu modelo, se tiver campo unidade
+                "unidade": "un",  # ajuste conforme seu modelo
                 "valor_unitario": arredonda(material.valor_unitario()),
                 "total": arredonda(total),
                 "fornecido_pelo_cliente": fornecido,
             })
 
-        # Despesas (%)
+        # Despesas (% sobre materiais + mão de obra)
         subtotal_sem_despesas = custo_mao_obra + custo_materiais
         percentual_despesas = (config.percentual_energia + config.percentual_internet) / Decimal(100)
         custo_despesas = subtotal_sem_despesas * percentual_despesas
+
+        # Total de custo sem lucro
         custo_total = subtotal_sem_despesas + custo_despesas
 
-        # Custos de impressão fixos (não entram no custo para cálculo de lucro)
+        # Impressões fixas
         valor_pb_unit = config.custo_impressao_pb
         valor_colorida_unit = config.custo_impressao_colorida
 
@@ -134,13 +135,10 @@ class Orcamento(models.Model):
         valor_impressao_colorida = Decimal(self.folhas_coloridas) * valor_colorida_unit
         valor_total_impressao = valor_impressao_pb + valor_impressao_colorida
 
-        # Lucro somente sobre materiais NÃO fornecidos
-        lucro_materiais = custo_materiais * (margem / Decimal(100))
-
-        # Preço final
-        preco_total = custo_total + lucro_materiais + valor_total_impressao
+        # Aplica margem de lucro apenas sobre custo_total (sem impressão)
+        lucro = custo_total * (margem / Decimal(100))
+        preco_total = custo_total + lucro + valor_total_impressao
         preco_unitario = preco_total / Decimal(self.quantidade)
-        lucro_total = preco_total - custo_total
 
         return {
             "tempo_por_unidade": self.tempo_por_unidade,
@@ -163,7 +161,7 @@ class Orcamento(models.Model):
 
             "preco_unitario": arredonda(preco_unitario),
             "preco_total": arredonda(preco_total),
-            "lucro": arredonda(lucro_total),
+            "lucro": arredonda(lucro),
 
             "materiais_detalhados": materiais_detalhados,
             "salario_desejado": arredonda(config.valor_mensal_desejado),
