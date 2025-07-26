@@ -43,6 +43,7 @@
             justify-content: space-between;
             transition: transform 0.2s;
             word-break: break-word;
+            width: 100%; /* Garante que o card ocupe a coluna toda */
         }
 
         .orcamento-item:hover {
@@ -116,15 +117,21 @@
             background-color: #2c80b4;
         }
 
-        /* Responsividade */
-        @media (max-width: 480px) {
+        /* Responsividade: telas pequenas (celular) */
+        @media (max-width: 600px) {
+            .orcamento-lista {
+                grid-template-columns: 1fr; /* 1 coluna só, cards empilhados */
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
             .ver-btn, .editar-btn {
+                width: 100%;
                 font-size: 16px;
                 padding: 14px 0;
                 white-space: normal;
-            }
-            .btn-group {
-                flex-direction: column;
             }
         }
     </style>
