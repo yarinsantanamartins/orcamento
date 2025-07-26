@@ -74,6 +74,10 @@
             background-color: #f39c12;
         }
 
+        .excluir-btn {
+            background-color: #e74c3c;
+        }
+
         .empty {
             text-align: center;
             font-size: 18px;
@@ -131,6 +135,7 @@
                 <div class="btn-group">
                     <a class="ver-btn" href="{% url 'resultado_orcamento' orcamento.pk %}">🔍 Ver</a>
                     <a class="editar-btn" href="{% url 'editar_orcamento' orcamento.pk %}">✏️ Editar</a>
+                    <a class="excluir-btn" href="{% url 'excluir_orcamento' orcamento.pk %}" onclick="return confirm('Tem certeza que deseja excluir este orçamento?');">🗑️ Excluir</a>
                 </div>
             </li>
         {% empty %}

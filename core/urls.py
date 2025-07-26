@@ -16,6 +16,8 @@ urlpatterns = [
     path('clientes/novo/', views.cadastrar_cliente, name='cadastrar_cliente'),
     path('produtos/cadastrar/', views.cadastrar_produto, name='cadastrar_produto'),
     path('orcamento/<int:pk>/editar/', views.editar_orcamento, name='editar_orcamento'),
+    path('orcamento/<int:pk>/excluir/', views.excluir_orcamento, name='excluir_orcamento'),
+
 ]
 
 if settings.DEBUG:

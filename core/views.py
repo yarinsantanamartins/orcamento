@@ -242,4 +242,7 @@ def editar_orcamento(request, pk):
         'orcamento': orcamento,
     })
 
-
+def excluir_orcamento(request, pk):
+    orcamento = get_object_or_404(Orcamento, pk=pk)
+    orcamento.delete()
+    return redirect('lista_orcamentos')
