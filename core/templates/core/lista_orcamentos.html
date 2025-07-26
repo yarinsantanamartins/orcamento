@@ -21,65 +21,70 @@
         .orcamento-lista {
             list-style: none;
             padding: 0;
-            max-width: 600px;
+            max-width: 900px;
             margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
         }
 
         .orcamento-item {
             background-color: #ffffff;
             border-left: 5px solid #4a90e2;
-            padding: 15px 20px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            width: 280px;
             display: flex;
+            flex-direction: column;
             justify-content: space-between;
-            align-items: center;
             transition: transform 0.2s;
-            gap: 10px;
             word-break: break-word;
         }
 
         .orcamento-item:hover {
-            transform: scale(1.02);
+            transform: scale(1.03);
             background-color: #f9fcff;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
         }
 
         .orcamento-nome {
             font-size: 18px;
             font-weight: bold;
             color: #333;
-            flex-grow: 1;
-            min-width: 0; /* para permitir quebra */
+            margin-bottom: 15px;
         }
 
         .btn-group {
             display: flex;
-            gap: 8px;
-            flex-shrink: 0;
+            gap: 10px;
         }
 
         .ver-btn, .editar-btn {
+            flex: 1;
             background-color: #4CAF50;
             color: white;
-            padding: 6px 14px;
+            padding: 10px 0;
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
             text-decoration: none;
             font-size: 14px;
-            transition: background-color 0.3s;
-            display: inline-block;
-            cursor: pointer;
+            font-weight: 600;
             text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
             white-space: nowrap;
         }
 
         .ver-btn:hover {
             background-color: #45a049;
         }
+
         .editar-btn {
             background-color: #2980b9;
         }
+
         .editar-btn:hover {
             background-color: #1f6391;
         }
@@ -95,11 +100,11 @@
             display: block;
             width: fit-content;
             margin: 40px auto 0;
-            padding: 10px 20px;
+            padding: 12px 25px;
             background-color: #3498db;
             color: white;
             text-align: center;
-            border-radius: 6px;
+            border-radius: 8px;
             text-decoration: none;
             font-weight: bold;
             transition: background-color 0.3s ease;
@@ -109,37 +114,23 @@
             background-color: #2c80b4;
         }
 
-        @media (max-width: 600px) {
+        /* Responsividade */
+        @media (max-width: 640px) {
             .orcamento-lista {
-                max-width: 100%;
-                padding: 0 10px;
+                justify-content: center;
             }
             .orcamento-item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
-                padding: 15px;
-            }
-
-            .orcamento-nome {
-                font-size: 16px;
-                font-weight: 600;
-                margin-bottom: 8px;
-                word-break: break-word;
-            }
-
-            .btn-group {
                 width: 100%;
-                justify-content: flex-start;
-                gap: 10px;
+                max-width: 400px;
             }
-
+            .btn-group {
+                flex-direction: column;
+            }
             .ver-btn, .editar-btn {
-                width: 48%;
-                font-size: 16px;
-                padding: 10px 0;
-                text-align: center;
+                width: 100%;
                 white-space: normal;
+                font-size: 16px;
+                padding: 12px 0;
             }
         }
     </style>
@@ -151,7 +142,7 @@
     <ul class="orcamento-lista">
         {% for orcamento in orcamentos %}
             <li class="orcamento-item">
-                <span class="orcamento-nome">📦 {{ orcamento.nome }} - {{ orcamento.cliente.nome }}</span>
+                <span class="orcamento-nome">{{ orcamento.nome }} - {{ orcamento.cliente.nome }}</span>
                 <div class="btn-group">
                     <a class="ver-btn" href="{% url 'resultado_orcamento' orcamento.pk %}">🔍 Ver</a>
                     <a class="editar-btn" href="{% url 'editar_orcamento' orcamento.pk %}">✏️ Editar</a>
