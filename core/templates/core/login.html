@@ -2,8 +2,8 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <title>Login - Sistema de Orçamento</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>🔐 Login - Sistema de Orçamento</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     * {
       box-sizing: border-box;
@@ -22,20 +22,26 @@
     .login-container {
       background: #fff;
       padding: 30px 40px;
-      border-radius: 10px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-      width: 100%;
-      max-width: 400px;
+      border-radius: 12px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 420px;
+      text-align: center;
     }
 
-    .login-container h2 {
-      text-align: center;
+    .logo img {
+      max-height: 80px;
+      margin-bottom: 10px;
+    }
+
+    h2 {
       color: #2c3e50;
       margin-bottom: 25px;
     }
 
     label {
       display: block;
+      text-align: left;
       margin-bottom: 6px;
       font-weight: 600;
       color: #333;
@@ -44,10 +50,10 @@
     input[type="text"],
     input[type="password"] {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       border: 1px solid #ccc;
-      border-radius: 6px;
-      margin-bottom: 20px;
+      border-radius: 8px;
+      margin-bottom: 18px;
       font-size: 15px;
     }
 
@@ -57,11 +63,11 @@
       background-color: #3498db;
       color: white;
       border: none;
-      border-radius: 6px;
-      font-size: 16px;
+      border-radius: 8px;
+      font-size: 13px;
       font-weight: bold;
       cursor: pointer;
-      transition: background-color 0.3s;
+      transition: background-color 0.3s ease;
     }
 
     button[type="submit"]:hover {
@@ -70,31 +76,47 @@
 
     .error-msg {
       color: red;
-      text-align: center;
       margin-bottom: 15px;
       font-weight: bold;
+    }
+
+    footer {
+      margin-top: 25px;
+      font-size: 13px;
+      color: #999;
     }
   </style>
 </head>
 <body>
 
   <div class="login-container">
-    <h2>🔐 Login</h2>
+
+    <div class="logo">
+      {% if empresa.logotipo %}
+        <img src="{{ empresa.logotipo.url }}" alt="Logo da Empresa">
+      {% endif %}
+    </div>
+
+    <h2>🔐 Bem-vindo, faça seu Login!</h2>
 
     {% if form.errors %}
-      <div class="error-msg">Usuário ou senha incorretos.</div>
+      <div class="error-msg">⚠️ Usuário ou senha incorretos.</div>
     {% endif %}
 
     <form method="post">
       {% csrf_token %}
-      <label for="username">Usuário:</label>
+      <label for="username">👤 Usuário:</label>
       <input type="text" name="username" id="username" required>
 
-      <label for="password">Senha:</label>
+      <label for="password">🔑 Senha:</label>
       <input type="password" name="password" id="password" required>
 
-      <button type="submit">Entrar</button>
+      <button type="submit">🚪 Entrar</button>
     </form>
+
+    <footer>
+      Desenvolvido por <strong>Alexandre Martins</strong> 💻
+    </footer>
   </div>
 
 </body>

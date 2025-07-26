@@ -1,27 +1,42 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from .models import Orcamento, ConfiguracoesSistema, Material, MateriaisUtilizados, Cliente
-from .models import Orcamento, ConfiguracoesSistema, Material, MateriaisUtilizados, Empresa
-from django.forms import ModelForm, inlineformset_factory
-from django.contrib import messages
-from django import forms
-from django.forms import ModelForm, inlineformset_factory
-from .models import Orcamento, MateriaisUtilizados, Empresa
+# views.py
 
-class OrcamentoForm(ModelForm):
-    class Meta:
-        model = Orcamento
-        fields = [
-            'cliente', 'nome', 'quantidade', 'tempo_por_unidade', 'margem_lucro',
-            'folhas_pb', 'folhas_coloridas',
-        ]
+# =======================
+# IMPORTAÇÕES DJANGO
+# =======================
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.urls import reverse
+from django import forms
+from decimal import Decimal
+
+# =======================
+# IMPORTAÇÕES INTERNAS
+# =======================
+from .models import (
+    Orcamento, Empresa, ConfiguracoesSistema,
+    Material, MateriaisUtilizados, Cliente
+)
+from .forms import (
+    OrcamentoForm, MateriaisUtilizadosFormSet,
+    ClienteForm, ConfiguracoesSistemaForm
+)
+
+# =======================
+# FORMSET
+# =======================
+from django.forms import inlineformset_factory
 
 MateriaisFormset = inlineformset_factory(
     Orcamento, MateriaisUtilizados,
-    fields=('material', 'quantidade_utilizada', 'fornecido_pelo_cliente'),  # checkbox do cliente fornece aqui
+    fields=('material', 'quantidade_utilizada', 'fornecido_pelo_cliente'),
     extra=1,
     can_delete=True
 )
 
+# =======================
+# NOVO ORÇAMENTO
+# =======================
 def novo_orcamento(request):
     if request.method == 'POST':
         form = OrcamentoForm(request.POST)
@@ -29,10 +44,8 @@ def novo_orcamento(request):
         
         if form.is_valid() and formset.is_valid():
             orcamento = form.save(commit=False)
-            empresa = Empresa.objects.first()  # ajuste conforme sua regra
-            orcamento.empresa = empresa
+            orcamento.empresa = Empresa.objects.first()  # Ajuste conforme regra
             orcamento.save()
-
             formset.instance = orcamento
             formset.save()
             return redirect('resultado_orcamento', pk=orcamento.pk)
@@ -46,12 +59,9 @@ def novo_orcamento(request):
     })
 
 
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib import messages
-from decimal import Decimal
-
-from .models import Orcamento, ConfiguracoesSistema
-
+# =======================
+# RESULTADO DO ORÇAMENTO
+# =======================
 def resultado_orcamento(request, pk):
     orcamento = get_object_or_404(Orcamento, pk=pk)
 
@@ -68,13 +78,9 @@ def resultado_orcamento(request, pk):
     valor_hora = config.valor_hora()
     valor_minuto = valor_hora / Decimal(60)
 
-    # Impressão – apenas para exibição (não entra no custo)
     custo_pb = Decimal(orcamento.folhas_pb) * config.custo_impressao_pb
     custo_colorida = Decimal(orcamento.folhas_coloridas) * config.custo_impressao_colorida
-    valor_pb_unit = config.custo_impressao_pb
-    valor_colorida_unit = config.custo_impressao_colorida
 
-    # Materiais detalhados — incluir só materiais NÃO fornecidos pelo cliente (fornecido_pelo_cliente == False)
     materiais = []
     custo_materiais = Decimal('0.00')
     for uso in orcamento.materiaisutilizados.all():
@@ -92,16 +98,6 @@ def resultado_orcamento(request, pk):
                 "fornecido_pelo_cliente": uso.fornecido_pelo_cliente,
             })
 
-    # Atualiza o custo dos materiais no resultado (calculado só com materiais não fornecidos)
-    resultado['custo_materiais'] = custo_materiais.quantize(Decimal('0.01'))
-    resultado['materiais_detalhados'] = materiais
-
-    # Totais (unitário * quantidade)
-    resultado['custo_mao_obra_total'] = (resultado['custo_mao_obra_unit'] * quantidade).quantize(Decimal('0.01'))
-    resultado['custo_materiais_total'] = custo_materiais.quantize(Decimal('0.01'))
-    resultado['custo_despesas_total'] = (resultado['custo_despesas_unit'] * quantidade).quantize(Decimal('0.01'))
-    resultado['custo_impressao_total'] = (custo_pb + custo_colorida).quantize(Decimal('0.01'))
-
     resultado.update({
         'quantidade': quantidade,
         'tempo_total_minutos': tempo_total_minutos,
@@ -110,8 +106,14 @@ def resultado_orcamento(request, pk):
         'valor_minuto': round(valor_minuto, 4),
         'custo_pb': round(custo_pb, 2),
         'custo_colorida': round(custo_colorida, 2),
-        'valor_pb_unit': valor_pb_unit,
-        'valor_colorida_unit': valor_colorida_unit,
+        'valor_pb_unit': config.custo_impressao_pb,
+        'valor_colorida_unit': config.custo_impressao_colorida,
+        'custo_materiais': custo_materiais.quantize(Decimal('0.01')),
+        'materiais_detalhados': materiais,
+        'custo_mao_obra_total': (resultado['custo_mao_obra_unit'] * quantidade).quantize(Decimal('0.01')),
+        'custo_materiais_total': custo_materiais.quantize(Decimal('0.01')),
+        'custo_despesas_total': (resultado['custo_despesas_unit'] * quantidade).quantize(Decimal('0.01')),
+        'custo_impressao_total': (custo_pb + custo_colorida).quantize(Decimal('0.01')),
     })
 
     return render(request, 'core/resultado_orcamento.html', {
@@ -120,21 +122,18 @@ def resultado_orcamento(request, pk):
     })
 
 
-
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-
-from .models import Empresa
+# =======================
+# DASHBOARD
+# =======================
 @login_required
 def dashboard(request):
-    empresa = Empresa.objects.first()  # pega a primeira empresa cadastrada, ajuste se precisar
+    empresa = Empresa.objects.first()
     return render(request, 'core/dashboard.html', {'empresa': empresa})
 
 
-from django.shortcuts import render, redirect
-from .models import ConfiguracoesSistema
-from .forms import ConfiguracoesSistemaForm
-
+# =======================
+# PARÂMETROS DO SISTEMA
+# =======================
 def parametros_sistema(request):
     configuracao, created = ConfiguracoesSistema.objects.get_or_create(pk=1)
 
@@ -149,16 +148,17 @@ def parametros_sistema(request):
     return render(request, 'core/parametros_sistema.html', {'form': form})
 
 
-from django.shortcuts import render
-from .models import Orcamento
-
+# =======================
+# LISTA DE ORÇAMENTOS
+# =======================
 def lista_orcamentos(request):
     orcamentos = Orcamento.objects.all()
     return render(request, 'core/lista_orcamentos.html', {'orcamentos': orcamentos})
 
-from django.shortcuts import render, get_object_or_404
-from .models import Orcamento
 
+# =======================
+# GERAR ORÇAMENTO HTML
+# =======================
 def gerar_orcamento_html(request, pk):
     orcamento = get_object_or_404(Orcamento, pk=pk)
     resultado = orcamento.calcular()
@@ -170,23 +170,26 @@ def gerar_orcamento_html(request, pk):
         'empresa': orcamento.empresa,
     })
 
-# views.py
-from django.shortcuts import render, redirect
-from .forms import ClienteForm
-from django.contrib import messages
 
+# =======================
+# CADASTRAR CLIENTE
+# =======================
 def cadastrar_cliente(request):
     if request.method == 'POST':
         form = ClienteForm(request.POST)
         if form.is_valid():
             form.save()
             messages.success(request, 'Cliente cadastrado com sucesso!')
-            return redirect('dashboard')  # ou 'lista_orcamentos', se preferir
+            return redirect('dashboard')
     else:
         form = ClienteForm()
 
     return render(request, 'core/form.html', {'form': form})
 
+
+# =======================
+# CADASTRAR PRODUTO
+# =======================
 class MaterialForm(forms.ModelForm):
     class Meta:
         model = Material
@@ -207,16 +210,13 @@ def cadastrar_produto(request):
             return redirect('cadastrar_produto')
     else:
         form = MaterialForm()
+
     return render(request, 'core/cadastrar_produto.html', {'form': form})
 
-from django.shortcuts import render, get_object_or_404, redirect
-from django.urls import reverse
-from .models import Orcamento
-from .forms import OrcamentoForm, MateriaisUtilizadosFormSet
-from core.forms import MateriaisUtilizadosFormSet
 
-
-
+# =======================
+# EDITAR ORÇAMENTO
+# =======================
 def editar_orcamento(request, pk):
     orcamento = get_object_or_404(Orcamento, pk=pk)
 
@@ -225,14 +225,12 @@ def editar_orcamento(request, pk):
         formset = MateriaisUtilizadosFormSet(request.POST, instance=orcamento)
 
         if form.is_valid() and formset.is_valid():
-            print("Formulários válidos, salvando...")
             orc = form.save(commit=False)
-            orc.empresa = orcamento.empresa  # mantém a empresa original aqui
+            orc.empresa = orcamento.empresa
             orc.save()
             formset.save()
             return redirect('resultado_orcamento', pk=orc.pk)
     else:
-        
         form = OrcamentoForm(instance=orcamento)
         formset = MateriaisUtilizadosFormSet(instance=orcamento)
 
@@ -242,6 +240,10 @@ def editar_orcamento(request, pk):
         'orcamento': orcamento,
     })
 
+
+# =======================
+# EXCLUIR ORÇAMENTO
+# =======================
 def excluir_orcamento(request, pk):
     orcamento = get_object_or_404(Orcamento, pk=pk)
     orcamento.delete()
